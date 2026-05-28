@@ -19,29 +19,27 @@
                 BROKER MQTT!
             </h1>
 
-            <form id="loginForm">
+            <form id="loginForm" action="/formulario" method="post">
 
                 <label>Broker</label>
-                <input type="text" id="topico" required>
+                <input type="text" id="BROKER" name="BROKER" required>
 
                 <label>Porta</label>
-                <input type="text" id="topico" required>
+                <input type="text" id="PORT" name="PORT" required>
 
                 <label>Tópico</label>
-                <input type="text" id="topico" required>
+                <input type="text" id="TOPIC" name="TOPIC" required>
 
                 <label>Usuário</label>
-                <input type="text" id="topico" required>
+                <input type="text" id="USERNAME" name="USERNAME" required>
 
                 <label>Senha</label>
-                <input type="password" id="senha" required>
+                <input type="password" id="PASSWORD" name="PASSWORD" required>
 
 
-                <a href="home.html">
                 <button type="submit">
                     entrar
                 </button>
-                </a>
 
             </form>
 
