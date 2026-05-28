@@ -46,8 +46,16 @@ async def receber_formulario(
 	USERNAME: Annotated[str, Form()],
 	PASSWORD: Annotated[str, Form()],
 ):
-	conectar_mqtt(BROKER, PORT, TOPIC, USERNAME, PASSWORD)
-	return
+	try:
+		conectar_mqtt(BROKER, PORT, TOPIC, USERNAME, PASSWORD)
+		return {"status": "ok"}
+	except Exception as e:
+		return {"status": "error", "message": str(e)}
+
+
+@app.get("/home")
+async def home(request: Request):
+    return templates.TemplateResponse(request, "home.html", {"request": request})
 
 
 
