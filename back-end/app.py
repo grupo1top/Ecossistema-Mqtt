@@ -10,7 +10,30 @@ from fastapi import Form
 from fastapi.responses import RedirectResponse
 from typing import Annotated
 from fastapi.staticfiles import StaticFiles
-import paho.mqtt.client as mqtt
 
 
 #                            IMPORT DAS BIBLIOTECAS                                     #
+
+app = FastAPI()
+
+
+@app.post("/formulario")
+async def receber_formulario(
+	BROKER: Annotated[str, Form()],
+	PORT: Annotated[int, Form()],
+	TOPIC: Annotated[str, Form()],
+	USERNAME: Annotated[str, Form()],
+	PASSWORD: Annotated[str, Form()],
+):
+	return {
+		"BROKER": BROKER,
+		"PORT": PORT,
+		"TOPIC": TOPIC,
+		"USERNAME": USERNAME,
+		"PASSWORD": PASSWORD,
+	}
+
+
+
+
+
