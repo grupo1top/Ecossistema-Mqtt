@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login MQTT</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <div class="container_login">
+
+        <div class="login-box">
+
+            <h1>
+                Seja Bem Vindo,<br>
+                Conecte-se ao seu<br>
+                BROKER MQTT!
+            </h1>
+
+            <form id="loginForm" action="/formulario" method="post">
+
+                <label>Broker</label>
+                <input type="text" id="BROKER" name="BROKER" required>
+
+                <label>Porta</label>
+                <input type="text" id="PORT" name="PORT" required>
+
+                <label>Tópico</label>
+                <input type="text" id="TOPIC" name="TOPIC" required>
+
+                <label>Usuário</label>
+                <input type="text" id="USERNAME" name="USERNAME" required>
+
+                <label>Senha</label>
+                <input type="password" id="PASSWORD" name="PASSWORD" required>
+
+
+                <button type="submit">
+                    entrar
+                </button>
+
+            </form>
+
+            <script>
+            (function(){
+                function showPopup(msg){
+                    let popup = document.getElementById('status-popup');
+                    if(!popup){
+                        popup = document.createElement('div');
+                        popup.id = 'status-popup';
+                        popup.style.position = 'fixed';
+                        popup.style.left = '50%';
+                        popup.style.top = '20px';
+                        popup.style.transform = 'translateX(-50%)';
+                        popup.style.background = '#222';
+                        popup.style.color = '#fff';
+                        popup.style.padding = '10px 16px';
+                        popup.style.borderRadius = '6px';
+                        popup.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+                        popup.style.zIndex = 9999;
+                        document.body.appendChild(popup);
+                    }
+                    popup.textContent = msg;
+                    popup.style.display = 'block';
+                }
+
+                const form = document.getElementById('loginForm');
+                form.addEventListener('submit', async function(e){
+                    e.preventDefault();
+                    const fd = new FormData(form);
+                    try{
+                        const res = await fetch(form.action, { method: 'POST', body: fd });
+                        const data = await res.json();
+                        if(data.status === 'ok'){
+                            showPopup('Conectado com sucesso! Redirecionando...');
+                            setTimeout(function(){ window.location.href = '/home'; }, 5000);
+                        } else {
+                            showPopup('Erro: ' + (data.message || 'Falha na conexão'));
+                        }
+                    }catch(err){
+                        showPopup('Erro de rede');
+                    }
+                });
+            })();
+            </script>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
