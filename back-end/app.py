@@ -2,13 +2,15 @@
 
 import os
 import time
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from fastapi import Form
+from fastapi.responses import RedirectResponse
+from typing import Annotated
+from fastapi.staticfiles import StaticFiles
+import paho.mqtt.client as mqtt
 
-try:
-    import paho.mqtt.client as mqtt
-
-except ImportError:
-    os.system("cls")
-    print("Problema na importação da Biblioteca MQTT")
-    time.sleep(5)
 
 #                            IMPORT DAS BIBLIOTECAS                                     #
