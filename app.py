@@ -20,7 +20,7 @@ from fastapi.staticfiles import StaticFiles
 app = FastAPI()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
-app.mount("/css", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="css")
+app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
 
 
 @app.get("/")
