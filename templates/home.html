@@ -24,13 +24,17 @@
                 <form action="/led/on" method="post">
                     <button class="comando" type="submit">LIGAR LED</button>
                 </form>
-                <button class="comando" type="button">PISCAR LED</button>
-                <button class="comando" type="button">DESLIGAR LED</button>
+                <form action="/led/piscar" method="post">
+                    <button class="comando" type="submit">PISCAR LED</button>
+                </form>
+                <form action="/led/off" method="post">
+                    <button class="comando" type="submit">DESLIGAR LED</button>
+                </form>
 
                 <div class="command-descriptions">
                     <p><strong>LIGAR LED:</strong> publica <code>ON</code> no tópico <code>esp32/led</code>.</p>
-                    <p><strong>PISCAR LED:</strong> reservado para publicar um comando de piscar quando a rota existir.</p>
-                    <p><strong>DESLIGAR LED:</strong> reservado para publicar <code>OFF</code> quando a rota existir.</p>
+                    <p><strong>PISCAR LED:</strong> publica <code>BLINK</code> no tópico <code>esp32/led</code>.</p>
+                    <p><strong>DESLIGAR LED:</strong> publica <code>OFF</code> no tópico <code>esp32/led</code>.</p>
                 </div>
             </div>
 

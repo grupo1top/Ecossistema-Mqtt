@@ -78,6 +78,12 @@ async def receber_formulario(
 		return {"status": "error", "message": str(e)}
 
 
+
+
+#                                 FORMULÁRIOS                                             #
+
+#                                BOTÕES DA HOME                                           #
+
 @app.post("/led/on")
 async def ligar_led():
 	try:
@@ -86,13 +92,22 @@ async def ligar_led():
 	except Exception as e:
 		return RedirectResponse(url="/home?status=error&message=Falha%20ao%20publicar%20no%20broker%20MQTT", status_code=303)
 
+@app.post("/led/off")
+async def desligar_led():
+	try:
+		publicar_mqtt("esp32/led", "OFF")
+		return RedirectResponse(url="/home?status=success&message=LED%20ligado%20e%20mensagem%20enviada%20ao%20broker", status_code=303)
+	except Exception as e:
+		return RedirectResponse(url="/home?status=error&message=Falha%20ao%20publicar%20no%20broker%20MQTT", status_code=303)
+	
 
-#                                 FORMULÁRIOS                                             #
-
-#                                 FORMULÁRIOS                                             #
-
-
-
+@app.post("/led/piscar")
+async def piscar_led():
+	try:
+		publicar_mqtt("esp32/led", "BLINK")
+		return RedirectResponse(url="/home?status=success&message=LED%20ligado%20e%20mensagem%20enviada%20ao%20broker", status_code=303)
+	except Exception as e:
+		return RedirectResponse(url="/home?status=error&message=Falha%20ao%20publicar%20no%20broker%20MQTT", status_code=303)
 
 
 
