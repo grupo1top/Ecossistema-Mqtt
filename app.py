@@ -49,6 +49,11 @@ def conectar_mqtt(BROKER, PORT, TOPIC, USERNAME, PASSWORD):
 	mqtt_client.loop_start()
 
 
+def publicar_mqtt(topic, message):
+	global mqtt_client
+	mqtt_client.publish(topic, message)
+
+
 @app.post("/formulario")
 async def receber_formulario(
 	BROKER: Annotated[str, Form()],
@@ -60,6 +65,15 @@ async def receber_formulario(
 	try:
 		conectar_mqtt(BROKER, PORT, TOPIC, USERNAME, PASSWORD)
 		return {"status": "ok"}
+	except Exception as e:
+		return {"status": "error", "message": str(e)}
+
+
+@app.post("/led/on")
+async def ligar_led():
+	try:
+		publicar_mqtt("esp32/led", "ON")
+		return RedirectResponse(url="/home", status_code=303)
 	except Exception as e:
 		return {"status": "error", "message": str(e)}
 
