@@ -57,6 +57,10 @@ async def receber_formulario(
 async def home(request: Request):
     return templates.TemplateResponse(request, "home.html", {"request": request})
 
+@app.get("/input")
+async def input(request: Request):
+	return templates.TemplateResponse(request, "input.html", {"request": request})
+
 
 
 #                                 FORMULÁRIOS                                             #
