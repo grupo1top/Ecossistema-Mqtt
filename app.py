@@ -15,7 +15,7 @@ from fastapi.staticfiles import StaticFiles
 
 #                            IMPORT DAS BIBLIOTECAS                                       #
 
-#                                 FORMULÁRIOS                                             #
+#                                 CONFIGURAÇÕES INICIAIS                                  #
 
 app = FastAPI()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -27,6 +27,17 @@ app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), na
 async def index(request: Request):
 	return templates.TemplateResponse(request, "index.html", {"request": request})
 
+@app.get("/home")
+async def home(request: Request):
+    return templates.TemplateResponse(request, "home.html", {"request": request})
+
+@app.get("/input")
+async def input(request: Request):
+	return templates.TemplateResponse(request, "input.html", {"request": request})
+
+#                                 CONFIGURAÇÕES INICIAIS                                  #
+
+#                                      FORMULARIOS                                        #
 
 def conectar_mqtt(BROKER, PORT, TOPIC, USERNAME, PASSWORD):
 	global mqtt_client
@@ -53,17 +64,11 @@ async def receber_formulario(
 		return {"status": "error", "message": str(e)}
 
 
-@app.get("/home")
-async def home(request: Request):
-    return templates.TemplateResponse(request, "home.html", {"request": request})
-
-@app.get("/input")
-async def input(request: Request):
-	return templates.TemplateResponse(request, "input.html", {"request": request})
-
-
+#                                 FORMULÁRIOS                                             #
 
 #                                 FORMULÁRIOS                                             #
+
+
 
 
 
