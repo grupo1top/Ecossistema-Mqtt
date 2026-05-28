@@ -12,7 +12,9 @@ from typing import Annotated
 from fastapi.staticfiles import StaticFiles
 
 
-#                            IMPORT DAS BIBLIOTECAS                                     #
+#                            IMPORT DAS BIBLIOTECAS                                       #
+
+#                                 FORMULÁRIOS                                             #
 
 app = FastAPI()
 
@@ -33,6 +35,8 @@ async def receber_formulario(
 		"PASSWORD": PASSWORD,
 	}
 
+
+#                                 FORMULÁRIOS                                             #
 
 
 
