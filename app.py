@@ -29,7 +29,13 @@ async def index(request: Request):
 
 @app.get("/home")
 async def home(request: Request):
-    return templates.TemplateResponse(request, "home.html", {"request": request})
+	status = request.query_params.get("status", "")
+	message = request.query_params.get("message", "")
+	return templates.TemplateResponse(
+		request,
+		"home.html",
+		{"request": request, "status": status, "message": message},
+	)
 
 @app.get("/input")
 async def input(request: Request):
@@ -51,7 +57,10 @@ def conectar_mqtt(BROKER, PORT, TOPIC, USERNAME, PASSWORD):
 
 def publicar_mqtt(topic, message):
 	global mqtt_client
-	mqtt_client.publish(topic, message)
+	info = mqtt_client.publish(topic, message)
+	info.wait_for_publish()
+	if info.rc != 0:
+		raise Exception("Falha ao publicar a mensagem no broker MQTT")
 
 
 @app.post("/formulario")
@@ -73,9 +82,9 @@ async def receber_formulario(
 async def ligar_led():
 	try:
 		publicar_mqtt("esp32/led", "ON")
-		return RedirectResponse(url="/home", status_code=303)
+		return RedirectResponse(url="/home?status=success&message=LED%20ligado%20e%20mensagem%20enviada%20ao%20broker", status_code=303)
 	except Exception as e:
-		return {"status": "error", "message": str(e)}
+		return RedirectResponse(url="/home?status=error&message=Falha%20ao%20publicar%20no%20broker%20MQTT", status_code=303)
 
 
 #                                 FORMULÁRIOS                                             #

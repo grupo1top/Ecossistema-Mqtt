@@ -24,12 +24,28 @@
                 <form action="/led/on" method="post">
                     <button class="comando" type="submit">LIGAR LED</button>
                 </form>
-                <button class="comando">PISCAR LED</button>
-                <button class="comando">DESLIGAR LED</button>
+                <button class="comando" type="button">PISCAR LED</button>
+                <button class="comando" type="button">DESLIGAR LED</button>
+
+                <div class="command-descriptions">
+                    <p><strong>LIGAR LED:</strong> publica <code>ON</code> no tópico <code>esp32/led</code>.</p>
+                    <p><strong>PISCAR LED:</strong> reservado para publicar um comando de piscar quando a rota existir.</p>
+                    <p><strong>DESLIGAR LED:</strong> reservado para publicar <code>OFF</code> quando a rota existir.</p>
+                </div>
             </div>
 
             <div class="footer">
                 <h1>STATUS</h1>
+                {% if status == 'success' %}
+                <p class="status-success">{{ message }}</p>
+                <p>HTTP 303 significa <strong>See Other</strong>: o FastAPI processou a requisição e redirecionou para <code>/home</code> para exibir o resultado.</p>
+                {% elif status == 'error' %}
+                <p class="status-error">{{ message }}</p>
+                <p>Erro na publicação: a mensagem não foi enviada ao broker MQTT ou o client não estava disponível.</p>
+                {% else %}
+                <p>Aguardando comando...</p>
+                <p>Nenhuma ação foi enviada ainda para o broker MQTT.</p>
+                {% endif %}
             </div>
 
         </div>
