@@ -109,5 +109,6 @@ async def piscar_led():
 	except Exception as e:
 		return RedirectResponse(url="/home?status=error&message=Falha%20ao%20publicar%20no%20broker%20MQTT", status_code=303)
 
+#                                BOTÕES DA HOME                                           #
 
-
+#                              SUBSCRIBER PARA STATUS                                     #
