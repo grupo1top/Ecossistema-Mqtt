@@ -24,6 +24,15 @@ body {
     padding: 20px;
 }
 
+/* Container para home */
+.container_home {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
 /* Caixa de login */
 .login-box {
     background: rgba(8, 23, 43, 0.95);
@@ -33,6 +42,20 @@ body {
     border-radius: 20px;
     box-shadow: 0 0 35px rgba(0, 255, 170, 0.12);
     border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Caixa de home */
+.home-box {
+    background: rgba(8, 23, 43, 0.95);
+    width: 100%;
+    max-width: 900px;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 35px rgba(0, 255, 170, 0.12);
+    border: 2px solid rgba(0, 255, 170, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
 }
 
 /* Título */
@@ -83,10 +106,10 @@ input:focus {
 button {
     width: 100%;
     padding: 15px;
-    border: none;
+    border: 2px solid rgba(0, 255, 170, 0.5);
     border-radius: 12px;
-    background: linear-gradient(90deg, #00e88f, #00c86f);
-    color: #051933;
+    background: transparent;
+    color: #ffffff;
     font-size: 1rem;
     font-weight: bold;
     text-transform: uppercase;
@@ -96,7 +119,9 @@ button {
 
 button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 18px rgba(0, 232, 143, 0.25);
+    border-color: #00e88f;
+    box-shadow: 0 0 15px rgba(0, 232, 143, 0.4);
+    background: rgba(0, 232, 143, 0.1);
 }
 
 /*input-html*/

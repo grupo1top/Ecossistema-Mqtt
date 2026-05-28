@@ -1,1 +1,63 @@
-script
+.high {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    border: 2px solid rgba(0, 255, 170, 0.3);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.high button {
+    flex: 1;
+    padding: 15px;
+    border: 2px solid rgba(0, 255, 170, 0.5);
+}
+
+.high h2 {
+    flex: 2;
+    text-align: center;
+    font-size: 1.1rem;
+    white-space: nowrap;
+}
+
+.mid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 20px;
+    border: 2px solid rgba(0, 255, 170, 0.3);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    min-height: 250px;
+}
+
+.mid button {
+    padding: 30px;
+    font-size: 1.1rem;
+}
+
+.comando {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 120px;
+}
+
+.footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    border: 2px solid rgba(0, 255, 170, 0.3);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    min-height: 150px;
+}
+
+.footer h1 {
+    font-size: 2rem;
+    color: #00e88f;
+    text-transform: uppercase;
+}
