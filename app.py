@@ -18,6 +18,14 @@ from fastapi.staticfiles import StaticFiles
 #                                 FORMULÁRIOS                                             #
 
 app = FastAPI()
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
+app.mount("/css", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="css")
+
+
+@app.get("/")
+async def index(request: Request):
+	return templates.TemplateResponse("index.html", {"request": request})
 
 
 def conectar_mqtt(BROKER, PORT, TOPIC, USERNAME, PASSWORD):
