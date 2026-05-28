@@ -10,3 +10,5 @@ except ImportError:
     os.system("cls")
     print("Problema na importação da Biblioteca MQTT")
     time.sleep(5)
+
+#                            IMPORT DAS BIBLIOTECAS                                     #
