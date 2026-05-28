@@ -1,1 +1,229 @@
-script
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #051933, #0b2545);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
+/* Container principal */
+.container_login {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Caixa de login */
+.login-box {
+    background: rgba(8, 23, 43, 0.95);
+    width: 100%;
+    max-width: 430px;
+    padding: 45px;
+    border-radius: 20px;
+    box-shadow: 0 0 35px rgba(0, 255, 170, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Título */
+.login-box h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    line-height: 1.4;
+    margin-bottom: 35px;
+    color: #ffffff;
+}
+
+/* Form */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: #b8c7d9;
+}
+
+/* Inputs */
+input {
+    width: 100%;
+    padding: 14px 16px;
+    margin-bottom: 22px;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background-color: #102542;
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    transition: 0.3s;
+}
+
+input::placeholder {
+    color: #7c8ca1;
+}
+
+input:focus {
+    border-color: #00e88f;
+    box-shadow: 0 0 12px rgba(0, 232, 143, 0.25);
+}
+
+/* Botão */
+button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #00e88f, #00c86f);
+    color: #051933;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 232, 143, 0.25);
+}
+
+/*input-html*/
+
+.container_input {
+    max-width: 2500px;
+    margin: auto;
+}
+
+/* TOPO */
+.topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(8, 23, 43, 0.95);
+    padding: 20px 150px;
+    border-radius: 18px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 0 25px rgba(0, 255, 170, 0.08);
+}
+
+.topo h2 {
+    font-size: 1.6rem;
+    font-weight: bold;
+}
+
+/* BOTÕES */
+button {
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: bold;
+    border-radius: 12px;
+}
+
+.voltar {
+    background: #102542;
+    color: white;
+    padding: 14px 14px;
+    
+}
+
+.voltar:hover {
+    background: #16365e;
+}
+
+.sair {
+    background: #e53935;
+    color: white;
+    padding: 14px 22px;
+}
+
+.sair:hover {
+    transform: translateY(-2px);
+    background: #ff4d4d;
+}
+
+/* BOXES */
+.comando-box,
+.status-box {
+    background: rgba(8, 23, 43, 0.95);
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 0 30px rgba(0,255,170,0.08);
+    margin-bottom: 25px;
+}
+
+/* TITULOS */
+.comando-box h3,
+.status-box h1 {
+    margin-bottom: 20px;
+    color: #00e88f;
+    letter-spacing: 1px;
+}
+
+/* INPUT + BOTAO */
+.input-area {
+    display: flex;
+    gap: 15px;
+}
+
+.input-area input {
+    flex: 1;
+    padding: 16px;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background: #102542;
+    color: white;
+    font-size: 1rem;
+    outline: none;
+    transition: 0.3s;
+}
+
+.input-area input::placeholder {
+    color: #7c8ca1;
+}
+
+.input-area input:focus {
+    border-color: #00e88f;
+    box-shadow: 0 0 12px rgba(0, 232, 143, 0.25);
+}
+
+/* BOTAO ENVIAR */
+.input-area button {
+    background: linear-gradient(90deg, #00e88f, #00c86f);
+    color: #051933;
+    padding: 0 30px;
+    font-size: 1rem;
+}
+
+.input-area button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 232, 143, 0.25);
+}
+
+/* STATUS */
+#statusArea {
+    background: #061426;
+    border-radius: 12px;
+    min-height: 180px;
+    padding: 20px;
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+#statusArea p {
+    color: #c7d3df;
+    font-size: 1rem;
+}
