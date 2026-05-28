@@ -1,11 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Monitoramento MQTT</title>
+
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
-    
+
+    <div class="container_input">
+
+        
+        <div class="topo">
+
+            <button class="voltar"">
+
+                Página Inicial
+            </button>
+
+            <h2>
+                Input de Comandos MQTT
+            </h2>
+
+            <button class="sair">
+
+                SAIR
+            </button>
+
+        </div>
+
+        <div class="comando-box">
+
+            <h3>ESCREVER COMANDO</h3>
+
+            <div class="input-area">
+
+                <input
+                    type="text"
+                    id="comandoInput"
+                    placeholder="Digite um comando MQTT"
+                >
+
+                <button onclick>
+                    ENVIAR
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="status-box">
+
+            <h1>STATUS</h1>
+
+            <div id="statusArea">
+
+                <p>
+                    Aguardando comando...
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
 </body>
 </html>
