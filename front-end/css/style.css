@@ -57,7 +57,7 @@ label {
 }
 
 /* Inputs */
-input {
+.container_login input {
     width: 100%;
     padding: 14px 16px;
     margin-bottom: 22px;
@@ -70,11 +70,11 @@ input {
     transition: 0.3s;
 }
 
-input::placeholder {
+.container_login input::placeholder {
     color: #7c8ca1;
 }
 
-input:focus {
+.container_login input:focus {
     border-color: #00e88f;
     box-shadow: 0 0 12px rgba(0, 232, 143, 0.25);
 }
@@ -105,23 +105,29 @@ button:hover {
     max-width: 2500px;
     margin: auto;
 }
-
+ 
 /* TOPO */
 .topo {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: rgba(8, 23, 43, 0.95);
-    padding: 20px 150px;
+    padding: 15px 35px;
     border-radius: 18px;
-    margin-bottom: 30px;
+    margin-bottom: 50px;
     border: 1px solid rgba(255,255,255,0.08);
     box-shadow: 0 0 25px rgba(0, 255, 170, 0.08);
+
+    gap: 180px; /* aumenta espaço entre os 3 itens */
 }
 
+/* TÍTULO */
 .topo h2 {
     font-size: 1.6rem;
     font-weight: bold;
+    margin: 0;
+    text-align: center;
+    flex: 1;
 }
 
 /* BOTÕES */
@@ -131,99 +137,93 @@ button {
     transition: 0.3s;
     font-weight: bold;
     border-radius: 12px;
+    height: 40px;
+    min-width: 90px; /* largura menor */
 }
 
+/* VOLTAR */
 .voltar {
     background: #102542;
     color: white;
-    padding: 14px 14px;
-    
+    padding: 6px 12px; /* menos largura lateral */
 }
 
 .voltar:hover {
     background: #16365e;
 }
 
+/* SAIR */
 .sair {
     background: #e53935;
     color: white;
-    padding: 14px 22px;
+    padding: 6px 14px; /* menos largura lateral */
 }
 
 .sair:hover {
     transform: translateY(-2px);
     background: #ff4d4d;
 }
-
 /* BOXES */
 .comando-box,
 .status-box {
     background: rgba(8, 23, 43, 0.95);
-    padding: 30px;
+    padding: 40px; /* era 30px */
     border-radius: 20px;
     border: 1px solid rgba(255,255,255,0.08);
     box-shadow: 0 0 30px rgba(0,255,170,0.08);
-    margin-bottom: 25px;
+    margin-bottom: 45px; /* era 25px */
 }
-
+ 
 /* TITULOS */
 .comando-box h3,
 .status-box h1 {
-    margin-bottom: 20px;
+    margin-bottom: 28px; /* era 20px */
     color: #00e88f;
     letter-spacing: 1px;
+    font-size: 1.4rem; /* tamanho explícito */
 }
-
+ 
 /* INPUT + BOTAO */
 .input-area {
     display: flex;
+    flex-direction: column;
     gap: 15px;
 }
-
+ 
 .input-area input {
     flex: 1;
-    padding: 16px;
+    padding: 45px 20px; /* era 16px — caixa mais alta */
     border: 2px solid transparent;
     border-radius: 12px;
     background: #102542;
     color: white;
-    font-size: 1rem;
+    font-size: 1.1rem; /* era 1rem */
     outline: none;
     transition: 0.3s;
+    min-height: 64px; /* garante altura mínima */
 }
-
+ 
 .input-area input::placeholder {
     color: #7c8ca1;
 }
-
+ 
 .input-area input:focus {
     border-color: #00e88f;
     box-shadow: 0 0 12px rgba(0, 232, 143, 0.25);
 }
-
+ 
 /* BOTAO ENVIAR */
 .input-area button {
     background: linear-gradient(90deg, #00e88f, #00c86f);
     color: #051933;
-    padding: 0 30px;
-    font-size: 1rem;
+    margin-top: 10px;
+    padding: 15px 4px;
+    width: 120px;   /* cancela o width: 100% do button genérico */
+    align-self: center;          /* ocupa a mesma altura do input */
 }
-
+ 
 .input-area button:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 18px rgba(0, 232, 143, 0.25);
 }
 
-/* STATUS */
-#statusArea {
-    background: #061426;
-    border-radius: 12px;
-    min-height: 180px;
-    padding: 20px;
-    border: 1px solid rgba(255,255,255,0.06);
-}
-
-#statusArea p {
-    color: #c7d3df;
-    font-size: 1rem;
-}
