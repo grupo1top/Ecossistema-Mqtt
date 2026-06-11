@@ -1,4 +1,4 @@
-# 🟩 Ecossistema-Mqtt
+# 🟩 Ecossistema-MQTT
 Este projeto foi desenvolvido com a finalidade de criar um ambiente de comunicação fundamentado no protocolo MQTT, aplicando conceitos de Internet das Coisas (IoT), redes de computadores, sistemas embarcados e desenvolvimento web.
 
 O sistema permite a comunicação entre uma interface web, um broker MQTT e uma ESP32, podendo monitorar o acionamento remoto de um componente físico (LED) conectado ao microcontrolador. 
