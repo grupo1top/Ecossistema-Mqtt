@@ -16,7 +16,11 @@
 
             <div class="high">
                 <a href="/input"><button>PAGINA DE INPUT</button></a>
-                <h2>CONECTADO AO TOPICO "AULA"</h2>
+                {% if mqtt_status.topic %}
+                <h2>MONITORANDO O TOPICO "{{ mqtt_status.topic }}"</h2>
+                {% else %}
+                <h2>AGUARDANDO CONEXAO MQTT</h2>
+                {% endif %}
                 <a href="/"><button>SAIR</button></a>
             </div>
 
@@ -40,6 +44,9 @@
 
             <div class="footer">
                 <h1>STATUS</h1>
+                <p id="mqtt-status-line">Carregando status MQTT...</p>
+                <p id="mqtt-topic-line"></p>
+                <p id="mqtt-message-line"></p>
                 {% if status == 'success' %}
                 <p class="status-success">{{ message }}</p>
                 <p>HTTP 303 significa <strong>See Other</strong>: o FastAPI processou a requisição e redirecionou para <code>/home</code> para exibir o resultado.</p>
@@ -55,6 +62,30 @@
         </div>
 
     </div>
+
+    <script>
+        const mqttStatusLine = document.getElementById('mqtt-status-line');
+        const mqttTopicLine = document.getElementById('mqtt-topic-line');
+        const mqttMessageLine = document.getElementById('mqtt-message-line');
+
+        async function atualizarStatusMQTT() {
+            try {
+                const response = await fetch('/mqtt/status', { cache: 'no-store' });
+                const data = await response.json();
+                const connectedText = data.connected ? 'Conectado' : 'Desconectado';
+                mqttStatusLine.textContent = `Status MQTT: ${connectedText} | Estado atual: ${data.state || 'indefinido'}`;
+                mqttTopicLine.textContent = data.topic ? `Tópico monitorado: ${data.topic}` : 'Nenhum tópico monitorado no momento.';
+                mqttMessageLine.textContent = data.last_message ? `Última mensagem recebida: ${data.last_message}` : '';
+            } catch (error) {
+                mqttStatusLine.textContent = 'Falha ao consultar o status MQTT.';
+                mqttTopicLine.textContent = '';
+                mqttMessageLine.textContent = '';
+            }
+        }
+
+        atualizarStatusMQTT();
+        setInterval(atualizarStatusMQTT, 2000);
+    </script>
 
 </body>
 </html>

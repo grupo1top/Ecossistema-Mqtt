@@ -68,6 +68,29 @@
 
     </div>
 
+    <script>
+        const statusArea = document.getElementById('statusArea');
+
+        async function atualizarStatusMQTT() {
+            try {
+                const response = await fetch('/mqtt/status', { cache: 'no-store' });
+                const data = await response.json();
+                const connectedText = data.connected ? 'Conectado' : 'Desconectado';
+                statusArea.innerHTML = `
+                    <p><strong>Status MQTT:</strong> ${connectedText}</p>
+                    <p><strong>Estado atual:</strong> ${data.state || 'indefinido'}</p>
+                    <p><strong>Tópico monitorado:</strong> ${data.topic || 'nenhum'}</p>
+                    <p><strong>Última mensagem:</strong> ${data.last_message || 'sem mensagens recebidas'}</p>
+                `;
+            } catch (error) {
+                statusArea.innerHTML = '<p>Falha ao consultar o status MQTT.</p>';
+            }
+        }
+
+        atualizarStatusMQTT();
+        setInterval(atualizarStatusMQTT, 2000);
+    </script>
+
 
 </body>
 </html>

@@ -3,8 +3,9 @@
 import os
 import time
 import importlib
+from threading import Lock
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi import Form
@@ -22,6 +23,55 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
 
+mqtt_client = None
+mqtt_lock = Lock()
+mqtt_topic = ""
+mqtt_state = {
+	"connected": False,
+	"broker": "",
+	"port": None,
+	"topic": "",
+	"state": "Aguardando conexão",
+	"last_message": "",
+	"updated_at": "",
+}
+
+
+def obter_estado_mqtt():
+	with mqtt_lock:
+		return dict(mqtt_state)
+
+
+def atualizar_estado_mqtt(topic, payload):
+	normalized = payload.strip().upper()
+	if normalized in {"ON", "1", "LIGADO"}:
+		state = "LIGADO"
+	elif normalized in {"OFF", "0", "DESLIGADO"}:
+		state = "DESLIGADO"
+	elif normalized in {"BLINK", "PISCAR"}:
+		state = "PISCANDO"
+	else:
+		state = f"Mensagem recebida: {payload}"
+
+	with mqtt_lock:
+		mqtt_state["state"] = state
+		mqtt_state["topic"] = topic
+		mqtt_state["last_message"] = payload
+		mqtt_state["updated_at"] = time.strftime("%d/%m/%Y %H:%M:%S")
+
+
+def mqtt_on_connect(client, userdata, flags, rc):
+	with mqtt_lock:
+		mqtt_state["connected"] = rc == 0
+		mqtt_state["updated_at"] = time.strftime("%d/%m/%Y %H:%M:%S")
+	if rc == 0 and mqtt_topic:
+		client.subscribe(mqtt_topic)
+
+
+def mqtt_on_message(client, userdata, msg):
+	payload = msg.payload.decode("utf-8", errors="ignore")
+	atualizar_estado_mqtt(msg.topic, payload)
+
 
 @app.get("/")
 async def index(request: Request):
@@ -31,10 +81,11 @@ async def index(request: Request):
 async def home(request: Request):
 	status = request.query_params.get("status", "")
 	message = request.query_params.get("message", "")
+	mqtt_status = obter_estado_mqtt()
 	return templates.TemplateResponse(
 		request,
 		"home.html",
-		{"request": request, "status": status, "message": message},
+		{"request": request, "status": status, "message": message, "mqtt_status": mqtt_status},
 	)
 
 @app.get("/input")
@@ -46,17 +97,36 @@ async def input(request: Request):
 #                                      FORMULARIOS                                        #
 
 def conectar_mqtt(BROKER, PORT, TOPIC, USERNAME, PASSWORD):
-	global mqtt_client
+	global mqtt_client, mqtt_topic
 	mqtt = importlib.import_module("paho.mqtt.client")
+	mqtt_topic = TOPIC
 	mqtt_client = mqtt.Client()
+	mqtt_client.on_connect = mqtt_on_connect
+	mqtt_client.on_message = mqtt_on_message
 	mqtt_client.username_pw_set(USERNAME, PASSWORD)
-	mqtt_client.connect(BROKER, PORT)
-	mqtt_client.subscribe(TOPIC)
+	with mqtt_lock:
+		mqtt_state["connected"] = False
+		mqtt_state["broker"] = BROKER
+		mqtt_state["port"] = PORT
+		mqtt_state["topic"] = TOPIC
+		mqtt_state["state"] = "Conectando ao broker"
+		mqtt_state["updated_at"] = time.strftime("%d/%m/%Y %H:%M:%S")
+	rc = mqtt_client.connect(BROKER, PORT)
+	if rc != 0:
+		with mqtt_lock:
+			mqtt_state["connected"] = False
+			mqtt_state["state"] = f"Falha ao conectar ao broker (rc={rc})"
+			mqtt_state["updated_at"] = time.strftime("%d/%m/%Y %H:%M:%S")
+		raise Exception(f"Falha ao conectar ao broker MQTT (rc={rc})")
 	mqtt_client.loop_start()
 
 
 def publicar_mqtt(topic, message):
 	global mqtt_client
+	if mqtt_client is None:
+		raise Exception("Conecte-se ao broker MQTT antes de publicar mensagens")
+	if not obter_estado_mqtt()["connected"]:
+		raise Exception("Broker MQTT ainda não está conectado")
 	info = mqtt_client.publish(topic, message)
 	info.wait_for_publish()
 	if info.rc != 0:
@@ -76,6 +146,11 @@ async def receber_formulario(
 		return {"status": "ok"}
 	except Exception as e:
 		return {"status": "error", "message": str(e)}
+
+
+@app.get("/mqtt/status")
+async def mqtt_status():
+	return JSONResponse(content=obter_estado_mqtt())
 
 
 
