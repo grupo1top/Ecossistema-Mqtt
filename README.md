@@ -280,7 +280,7 @@ mosquitto_pub -h localhost -t teste -m "Olá MQTT"
 
 Após o envio da mensagem, o subscriber recebeu os dados corretamente, validando o funcionamento do broker.
 
-# 🟩 Problemas e Soluções Aplicadas na Configuração do Broker MQTT
+### 🟩 Problemas e Soluções Aplicadas na Configuração do Broker MQTT
 
 ## 1. Falha na Inicialização do Broker Mosquitto
 
