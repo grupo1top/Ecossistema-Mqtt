@@ -49,8 +49,6 @@
                 <p id="mqtt-message-line"></p>
                 {% if status == 'success' %}
                 <p class="status-success">{{ message }}</p>
-                <p>HTTP 303 significa <strong>See Other</strong>: o FastAPI processou a requisição e redirecionou para <code>/home</code> para exibir o resultado.</p>
-                {% elif status == 'error' %}
                 <p class="status-error">{{ message }}</p>
                 <p>Erro na publicação: a mensagem não foi enviada ao broker MQTT ou o client não estava disponível.</p>
                 {% else %}
