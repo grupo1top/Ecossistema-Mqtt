@@ -230,7 +230,6 @@ async def ligar_led():
 
 
 @app.post("/ON")
-@app.post("/on")
 async def input_ligar():
 	try:
 		publicar_mqtt(COMMAND_TOPIC, "ON")
@@ -240,7 +239,6 @@ async def input_ligar():
 
 
 @app.post("/OFF")
-@app.post("/off")
 async def input_desligar():
 	try:
 		publicar_mqtt(COMMAND_TOPIC, "OFF")
@@ -267,4 +265,3 @@ async def piscar_led():
 
 #                                BOTÕES DA HOME                                           #
 
-#                              SUBSCRIBER PARA STATUS                                     #
