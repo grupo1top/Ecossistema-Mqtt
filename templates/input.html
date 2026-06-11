@@ -76,11 +76,17 @@
                 const response = await fetch('/mqtt/status', { cache: 'no-store' });
                 const data = await response.json();
                 const connectedText = data.connected ? 'Conectado' : 'Desconectado';
+                const subscribedTopics = data.subscribed_topics && data.subscribed_topics.length
+                    ? data.subscribed_topics.join(', ')
+                    : 'nenhum';
                 statusArea.innerHTML = `
                     <p><strong>Status MQTT:</strong> ${connectedText}</p>
+                    <p><strong>Subscriber:</strong> ${data.subscribed ? 'ativo' : 'inativo'}</p>
                     <p><strong>Estado atual:</strong> ${data.state || 'indefinido'}</p>
-                    <p><strong>Tópico monitorado:</strong> ${data.topic || 'nenhum'}</p>
-                    <p><strong>Última mensagem:</strong> ${data.last_message || 'sem mensagens recebidas'}</p>
+                    <p><strong>Topicos inscritos:</strong> ${subscribedTopics}</p>
+                    <p><strong>Ultimo comando recebido:</strong> ${data.last_message || 'sem mensagens recebidas'}</p>
+                    <p><strong>Topico da mensagem:</strong> ${data.last_message_topic || 'sem topico'}</p>
+                    <p><strong>Recebido em:</strong> ${data.updated_at || 'sem horario'}</p>
                 `;
             } catch (error) {
                 statusArea.innerHTML = '<p>Falha ao consultar o status MQTT.</p>';

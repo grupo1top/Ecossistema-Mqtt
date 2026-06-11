@@ -36,9 +36,9 @@
                 </form>
 
                 <div class="command-descriptions">
-                    <p><strong>LIGAR LED:</strong> publica <code>ON</code> no tópico <code>esp32/led</code>.</p>
-                    <p><strong>PISCAR LED:</strong> publica <code>BLINK</code> no tópico <code>esp32/led</code>.</p>
-                    <p><strong>DESLIGAR LED:</strong> publica <code>OFF</code> no tópico <code>esp32/led</code>.</p>
+                    <p><strong>LIGAR LED:</strong> publica <code>ON</code> no topico <code>esp32/led</code>.</p>
+                    <p><strong>PISCAR LED:</strong> publica <code>BLINK</code> no topico <code>esp32/led</code>.</p>
+                    <p><strong>DESLIGAR LED:</strong> publica <code>OFF</code> no topico <code>esp32/led</code>.</p>
                 </div>
             </div>
 
@@ -49,11 +49,12 @@
                 <p id="mqtt-message-line"></p>
                 {% if status == 'success' %}
                 <p class="status-success">{{ message }}</p>
+                {% elif status == 'error' %}
                 <p class="status-error">{{ message }}</p>
-                <p>Erro na publicação: a mensagem não foi enviada ao broker MQTT ou o client não estava disponível.</p>
+                <p>Erro na publicacao: a mensagem nao foi enviada ao broker MQTT ou o client nao estava disponivel.</p>
                 {% else %}
-                <p>Aguardando comando...</p>
-                <p>Nenhuma ação foi enviada ainda para o broker MQTT.</p>
+                <p>Aguardando comando recebido pelo broker...</p>
+                <p>Nenhuma mensagem foi recebida no topico monitorado ainda.</p>
                 {% endif %}
             </div>
 
@@ -71,9 +72,16 @@
                 const response = await fetch('/mqtt/status', { cache: 'no-store' });
                 const data = await response.json();
                 const connectedText = data.connected ? 'Conectado' : 'Desconectado';
-                mqttStatusLine.textContent = `Status MQTT: ${connectedText} | Estado atual: ${data.state || 'indefinido'}`;
-                mqttTopicLine.textContent = data.topic ? `Tópico monitorado: ${data.topic}` : 'Nenhum tópico monitorado no momento.';
-                mqttMessageLine.textContent = data.last_message ? `Última mensagem recebida: ${data.last_message}` : '';
+
+                const subscribedTopics = data.subscribed_topics && data.subscribed_topics.length
+                    ? data.subscribed_topics.join(', ')
+                    : 'nenhum';
+
+                mqttStatusLine.textContent = `Status MQTT: ${connectedText} | Subscriber: ${data.subscribed ? 'ativo' : 'inativo'} | Estado atual: ${data.state || 'indefinido'}`;
+                mqttTopicLine.textContent = `Topicos inscritos: ${subscribedTopics}`;
+                mqttMessageLine.textContent = data.last_message
+                    ? `Ultimo comando recebido: ${data.last_message} | Topico: ${data.last_message_topic || 'indefinido'} | Recebido em: ${data.updated_at || 'indefinido'}`
+                    : 'Nenhum comando recebido do broker ainda.';
             } catch (error) {
                 mqttStatusLine.textContent = 'Falha ao consultar o status MQTT.';
                 mqttTopicLine.textContent = '';
