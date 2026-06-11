@@ -282,19 +282,18 @@ Após o envio da mensagem, o subscriber recebeu os dados corretamente, validando
 
 ### 🟩 Problemas e Soluções Aplicadas na Configuração do Broker MQTT
 
-## 1. Falha na Inicialização do Broker Mosquitto
+### 1. Falha na Inicialização do Broker Mosquitto
 
-### Problema
+Problema
 O serviço Mosquitto não iniciava corretamente, apresentando o erro:
 
 ```bash
 Error: Unable to write pid file.
 ```
-
-### Causa
+Causa
 Ausência da pasta necessária para armazenamento do arquivo PID e permissões inadequadas.
 
-### Solução
+Solução
 
 Criação da pasta e ajuste das permissões:
 
@@ -305,19 +304,18 @@ sudo chown mosquitto:mosquitto /run/mosquitto
 
 ---
 
-## 2. Conflito na Porta 1883
+### 2. Conflito na Porta 1883
 
-### Problema
+Problema
 Ao iniciar o broker foi exibido o erro:
 
 ```bash
 Error: Address already in use
 ```
-
-### Causa
+Causa
 A porta 1883 já estava sendo utilizada por outra instância do Mosquitto.
 
-### Solução
+Solução
 
 Verificação dos serviços utilizando a porta:
 
@@ -335,9 +333,9 @@ Confirmando que o broker já estava em execução.
 
 ---
 
-## 3. Broker Restrito a Conexões Locais
+### 3. Broker Restrito a Conexões Locais
 
-### Problema
+Problema
 O Mosquitto aceitava apenas conexões locais.
 
 Mensagem observada:
@@ -346,10 +344,10 @@ Mensagem observada:
 Starting in local only mode.
 ```
 
-### Causa
+Causa
 Configuração padrão do broker.
 
-### Solução
+Solução
 
 Edição do arquivo de configuração:
 
@@ -372,9 +370,9 @@ sudo systemctl restart mosquitto
 
 ---
 
-## 4. Dispositivos Externos Não Conseguam Acessar o Broker
+### 4. Dispositivos Externos Não Conseguam Acessar o Broker
 
-### Problema
+Problema
 Clientes MQTT externos apresentavam erro de conexão.
 
 **Sintoma:**
@@ -382,11 +380,10 @@ Clientes MQTT externos apresentavam erro de conexão.
 ```text
 Connection Lost
 ```
-
-### Causa
+Causa
 O WSL2 opera em modo NAT, impedindo acesso direto ao broker hospedado no Linux.
 
-### Solução
+Solução
 
 Configuração do Port Proxy no Windows para encaminhar o tráfego da porta 1883 para o IP interno do WSL:
 
@@ -400,9 +397,9 @@ connectaddress=IP_DO_WSL
 
 ---
 
-## 5. Port Proxy Restrito ao Localhost
+### 5. Port Proxy Restrito ao Localhost
 
-### Problema
+Problema
 O encaminhamento estava aceitando apenas conexões locais.
 
 Verificação realizada:
@@ -417,10 +414,10 @@ Resultado encontrado:
 TCP 127.0.0.1:1883 0.0.0.0:0 LISTENING
 ```
 
-### Causa
+Causa
 O Port Proxy estava vinculado apenas ao localhost, impedindo conexões externas.
 
-### Solução
+Solução
 
 Remoção das configurações anteriores:
 
@@ -461,15 +458,15 @@ TCP 0.0.0.0:1883 0.0.0.0:0 LISTENING
 
 ---
 
-## 6. Bloqueio da Porta pelo Firewall do Windows
+### 6. Bloqueio da Porta pelo Firewall do Windows
 
-### Problema
+Problema
 As conexões externas continuavam falhando.
 
-### Causa
+Causa
 A porta 1883 não possuía regra de liberação no firewall.
 
-### Solução
+Solução
 
 Criação da regra:
 
@@ -500,12 +497,12 @@ Confirmando que a regra foi criada corretamente.
 
 ---
 
-## 7. Testes de Conectividade
+### 7. Testes de Conectividade
 
-### Problema
+Problema
 Necessidade de verificar se a porta estava acessível pela rede.
 
-### Solução
+Solução
 
 Teste realizado a partir de outro dispositivo:
 
@@ -523,20 +520,20 @@ Confirmando a acessibilidade da porta.
 
 ---
 
-## 8. Erros Durante Testes MQTT
+### 8. Erros Durante Testes MQTT
 
-### 8.1 Publicação sem mensagem
+8.1 Publicação sem mensagem
 
-#### Erro
+Erro
 
 ```bash
 Both topic and message must be supplied.
 ```
 
-#### Causa
+Causa
 O comando de publicação foi executado sem informar a mensagem.
 
-#### Solução
+Solução
 
 Utilização do comando correto:
 
@@ -546,15 +543,15 @@ mosquitto_pub -h localhost -t Aula -m "oi"
 
 ---
 
-### 8.2 Assinatura de tópico aparentemente travada
+8.2 Assinatura de tópico aparentemente travada
 
-#### Problema
+Problema
 O comando permanecia aguardando indefinidamente.
 
-#### Causa
+Causa
 Comportamento normal do cliente MQTT Subscriber, que permanece escutando mensagens até ser encerrado.
 
-#### Comando utilizado
+Comando utilizado
 
 ```bash
 mosquitto_sub -h localhost -t Aula
@@ -567,29 +564,6 @@ CTRL + C
 ```
 
 ---
-
-## Resultado Final
-
-Após todas as correções realizadas:
-
-- O broker Mosquitto passou a iniciar corretamente;
-- A porta TCP 1883 ficou disponível para comunicação;
-- O broker passou a aceitar conexões externas;
-- O Firewall do Windows permitiu o tráfego na porta 1883;
-- O Port Proxy encaminhou corretamente as conexões para o WSL;
-- Os testes de conectividade foram concluídos com sucesso;
-- Clientes MQTT da rede conseguiram publicar e receber mensagens normalmente.
-
-### Endereço de acesso do broker
-
-```text
-192.168.0.15:1883
-```
-
-### Validação Final
-
-O broker MQTT ficou totalmente operacional e acessível pela rede local através do endereço IP da máquina Windows, permitindo comunicação entre múltiplos clientes MQTT.
-
 
 
 #### Endereço do Broker
