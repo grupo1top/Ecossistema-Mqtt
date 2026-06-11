@@ -7,7 +7,7 @@ O sistema permite a comunicação entre uma interface web, um broker MQTT e uma 
 
 Construir um sistema operacional de troca de dados utilizando MQTT, que é constituído por:
 
-- Corretor MQTT rodando no WSL do Windows
+- Broker MQTT rodando no WSL do Windows
 - ESP32 que se conecta ao corretor
 - Interface web para monitoramento e controle
 - Ativação de um componente físico (LED foi o escolhido)
@@ -25,7 +25,7 @@ Hardware
 Software
 
 - WSL
-- Mosquitto MQTT Broker
+- Mosquitto MQTT Broker 
 - Visual Studio Code
 - Programação em Python + HTML + CSS + Java
 - FastAPI + venv
@@ -41,34 +41,231 @@ O funcionamento do sistema ocorre por meio da comunicação entre o broker MQTT,
 
 Para instalação e configuração principal do mosquitto fizemos as seguintes configurações:
 
-#### Atualização do sistema
+### 1. Instalar o Mosquitto no WSL
 
-```
+Abra o Ubuntu WSL:
+
+```bash
 sudo apt update
-sudo apt upgrade
+sudo apt install mosquitto mosquitto-clients -y
 ```
 
-#### Instalação do Mosquitto
+### 2. Configurar o Mosquitto
 
-```
-sudo apt install mosquitto
-sudo apt install mosquitto-clients
-```
+Edite o arquivo de configuração:
 
-#### Inicialização do serviço
-
-```
-sudo systemctl start mosquitto
+```bash
+sudo nano /etc/mosquitto/mosquitto.conf
 ```
 
-#### Verificação do status
+Apague o conteúdo existente e deixe:
 
 ```
-sudo systemctl status mosquitto
+pid_file /run/mosquitto/mosquitto.pid
+
+persistence true
+persistence_location /var/lib/mosquitto/
+
+log_dest stdout
+
+listener 1883
+
+allow_anonymous true
 ```
 
-Para validar o funcionamento do broker foram realizados testes de publicação e subscrição utilizando terminal Linux.
+Salve:
 
+```
+CTRL + O
+ENTER
+CTRL + X
+```
+
+---
+
+### 3. Iniciar o Mosquitto
+
+Execute:
+
+```bash
+sudo mosquitto -c /etc/mosquitto/mosquitto.conf -v
+```
+
+Se estiver funcionando corretamente aparecerá algo semelhante a:
+
+```
+Opening ipv4 listen socket on port 1883.
+Opening ipv6 listen socket on port 1883.
+```
+
+---
+
+### 4. Verificar se o broker está escutando
+
+Execute:
+
+```bash
+sudo ss -tulpn | grep 1883
+```
+
+Resultado esperado:
+
+```
+tcp LISTEN 0 100 0.0.0.0:1883
+```
+
+---
+
+### 5. Descobrir o IP do WSL
+
+Execute:
+
+```bash
+hostname -I
+```
+
+Exemplo:
+
+```
+172.19.40.226
+```
+
+Guarde esse IP.
+
+---
+
+### 6. Criar redirecionamento da porta no Windows
+
+Abra o PowerShell como ADMINISTRADOR.
+
+Execute:
+
+```powershell
+netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=1883 connectaddress=172.19.40.226 connectport=1883
+```
+
+Substitua:
+
+```
+172.19.40.226
+```
+
+pelo IP do seu WSL.
+
+---
+
+### 7. Liberar a porta no Firewall do Windows
+
+No PowerShell Admin:
+
+```powershell
+New-NetFirewallRule -DisplayName "MQTT Mosquitto 1883" -Direction Inbound -Protocol TCP -LocalPort 1883 -Action Allow
+```
+
+---
+
+### 8. Validar o portproxy
+
+Execute:
+
+```powershell
+netsh interface portproxy show all
+```
+
+Resultado esperado:
+
+```
+0.0.0.0     1883     172.19.40.226     1883
+```
+
+---
+
+### 9. Descobrir o IP do Windows
+
+No CMD ou PowerShell:
+
+```powershell
+ipconfig
+```
+
+Pegue o IPv4 da máquina.
+
+Exemplo:
+
+```
+192.168.0.105
+```
+
+Esse será o IP utilizado pelos dispositivos externos.
+
+---
+
+### 10. Testar o broker localmente
+
+## Subscriber
+
+Abra um terminal WSL:
+
+```bash
+mosquitto_sub -h localhost -t Aula
+```
+
+---
+
+## Publisher
+
+Abra outro terminal WSL:
+
+```bash
+mosquitto_pub -h localhost -t Aula -m "Teste MQTT"
+```
+
+Resultado esperado:
+
+```
+Teste MQTT
+```
+
+---
+
+### 11. Testar via MQTT Explorer
+
+Instale:
+
+MQTT Explorer
+
+Configure:
+
+```
+Host: 192.168.0.105
+Port: 1883
+SSL/TLS: OFF
+Username: vazio
+Password: vazio
+```
+
+Clique em:
+
+```
+CONNECT
+```
+
+---
+
+### 12. Publicar mensagens para teste
+
+No WSL:
+
+```bash
+mosquitto_pub -h localhost -t Aula -m "Primeira mensagem"
+```
+
+No MQTT Explorer aparecerá:
+
+```
+Aula
+ └── Primeira mensagem
+```
 #### Subscriber
 
 ```
@@ -83,15 +280,320 @@ mosquitto_pub -h localhost -t teste -m "Olá MQTT"
 
 Após o envio da mensagem, o subscriber recebeu os dados corretamente, validando o funcionamento do broker.
 
+# 🟩 Problemas e Soluções Aplicadas na Configuração do Broker MQTT
+
+## 1. Falha na Inicialização do Broker Mosquitto
+
+### Problema
+O serviço Mosquitto não iniciava corretamente, apresentando o erro:
+
+```bash
+Error: Unable to write pid file.
+```
+
+### Causa
+Ausência da pasta necessária para armazenamento do arquivo PID e permissões inadequadas.
+
+### Solução
+
+Criação da pasta e ajuste das permissões:
+
+```bash
+sudo mkdir -p /run/mosquitto
+sudo chown mosquitto:mosquitto /run/mosquitto
+```
+
+---
+
+## 2. Conflito na Porta 1883
+
+### Problema
+Ao iniciar o broker foi exibido o erro:
+
+```bash
+Error: Address already in use
+```
+
+### Causa
+A porta 1883 já estava sendo utilizada por outra instância do Mosquitto.
+
+### Solução
+
+Verificação dos serviços utilizando a porta:
+
+```bash
+sudo ss -tulnp | grep 1883
+```
+
+Resultado obtido:
+
+```text
+0.0.0.0:1883
+```
+
+Confirmando que o broker já estava em execução.
+
+---
+
+## 3. Broker Restrito a Conexões Locais
+
+### Problema
+O Mosquitto aceitava apenas conexões locais.
+
+Mensagem observada:
+
+```bash
+Starting in local only mode.
+```
+
+### Causa
+Configuração padrão do broker.
+
+### Solução
+
+Edição do arquivo de configuração:
+
+```bash
+sudo nano /etc/mosquitto/mosquitto.conf
+```
+
+Adição das configurações:
+
+```conf
+listener 1883
+allow_anonymous true
+```
+
+Reinicialização do serviço:
+
+```bash
+sudo systemctl restart mosquitto
+```
+
+---
+
+## 4. Dispositivos Externos Não Conseguam Acessar o Broker
+
+### Problema
+Clientes MQTT externos apresentavam erro de conexão.
+
+**Sintoma:**
+
+```text
+Connection Lost
+```
+
+### Causa
+O WSL2 opera em modo NAT, impedindo acesso direto ao broker hospedado no Linux.
+
+### Solução
+
+Configuração do Port Proxy no Windows para encaminhar o tráfego da porta 1883 para o IP interno do WSL:
+
+```powershell
+netsh interface portproxy add v4tov4 `
+listenport=1883 `
+listenaddress=0.0.0.0 `
+connectport=1883 `
+connectaddress=IP_DO_WSL
+```
+
+---
+
+## 5. Port Proxy Restrito ao Localhost
+
+### Problema
+O encaminhamento estava aceitando apenas conexões locais.
+
+Verificação realizada:
+
+```powershell
+netstat -ano | findstr 1883
+```
+
+Resultado encontrado:
+
+```text
+TCP 127.0.0.1:1883 0.0.0.0:0 LISTENING
+```
+
+### Causa
+O Port Proxy estava vinculado apenas ao localhost, impedindo conexões externas.
+
+### Solução
+
+Remoção das configurações anteriores:
+
+```powershell
+netsh interface portproxy reset
+```
+
+Reinicialização do serviço responsável:
+
+```powershell
+net stop iphlpsvc
+net start iphlpsvc
+```
+
+Descoberta do IP atual do WSL:
+
+```bash
+ip addr show eth0
+```
+
+Criação de novo encaminhamento:
+
+```powershell
+netsh interface portproxy add v4tov4 listenport=1883 listenaddress=0.0.0.0 connectport=1883 connectaddress=IP_DO_WSL
+```
+
+Validação:
+
+```powershell
+netstat -ano | findstr 1883
+```
+
+Resultado esperado:
+
+```text
+TCP 0.0.0.0:1883 0.0.0.0:0 LISTENING
+```
+
+---
+
+## 6. Bloqueio da Porta pelo Firewall do Windows
+
+### Problema
+As conexões externas continuavam falhando.
+
+### Causa
+A porta 1883 não possuía regra de liberação no firewall.
+
+### Solução
+
+Criação da regra:
+
+```powershell
+New-NetFirewallRule `
+-DisplayName "MQTT1883" `
+-Direction Inbound `
+-Protocol TCP `
+-LocalPort 1883 `
+-Action Allow
+```
+
+Validação da regra:
+
+```powershell
+Get-NetFirewallRule -DisplayName "MQTT1883"
+```
+
+Resultado:
+
+```text
+Enabled   : True
+Action    : Allow
+Direction : Inbound
+```
+
+Confirmando que a regra foi criada corretamente.
+
+---
+
+## 7. Testes de Conectividade
+
+### Problema
+Necessidade de verificar se a porta estava acessível pela rede.
+
+### Solução
+
+Teste realizado a partir de outro dispositivo:
+
+```powershell
+Test-NetConnection 192.168.0.15 -Port 1883
+```
+
+Resultado:
+
+```text
+TcpTestSucceeded : True
+```
+
+Confirmando a acessibilidade da porta.
+
+---
+
+## 8. Erros Durante Testes MQTT
+
+### 8.1 Publicação sem mensagem
+
+#### Erro
+
+```bash
+Both topic and message must be supplied.
+```
+
+#### Causa
+O comando de publicação foi executado sem informar a mensagem.
+
+#### Solução
+
+Utilização do comando correto:
+
+```bash
+mosquitto_pub -h localhost -t Aula -m "oi"
+```
+
+---
+
+### 8.2 Assinatura de tópico aparentemente travada
+
+#### Problema
+O comando permanecia aguardando indefinidamente.
+
+#### Causa
+Comportamento normal do cliente MQTT Subscriber, que permanece escutando mensagens até ser encerrado.
+
+#### Comando utilizado
+
+```bash
+mosquitto_sub -h localhost -t Aula
+```
+
+Para interromper a execução:
+
+```bash
+CTRL + C
+```
+
+---
+
+## Resultado Final
+
+Após todas as correções realizadas:
+
+- O broker Mosquitto passou a iniciar corretamente;
+- A porta TCP 1883 ficou disponível para comunicação;
+- O broker passou a aceitar conexões externas;
+- O Firewall do Windows permitiu o tráfego na porta 1883;
+- O Port Proxy encaminhou corretamente as conexões para o WSL;
+- Os testes de conectividade foram concluídos com sucesso;
+- Clientes MQTT da rede conseguiram publicar e receber mensagens normalmente.
+
+### Endereço de acesso do broker
+
+```text
+192.168.0.15:1883
+```
+
+### Validação Final
+
+O broker MQTT ficou totalmente operacional e acessível pela rede local através do endereço IP da máquina Windows, permitindo comunicação entre múltiplos clientes MQTT.
+
+
+
 #### Endereço do Broker
 #### 
-
-IP utilizado:
-
-```
-[192.168.0.72]
-```
-
 Porta padrão MQTT:
 ```
 1883
@@ -207,6 +709,8 @@ Ao selecionar uma das opções, a mensagem será enviada ao broker MQTT e interp
 ### 🟩 Fotos do funcionamento
 <img width="1600" height="900" alt="WhatsApp Image 2026-05-28 at 07 57 58" src="https://github.com/user-attachments/assets/a97d7d62-c95e-4345-87d0-3d65835aa195" />
 <img width="1280" height="720" alt="WhatsApp Image 2026-05-28 at 19 31 14" src="https://github.com/user-attachments/assets/ebe00883-1383-42e4-92dd-c4898be230c5" />
+<img width="1600" height="899" alt="WhatsApp Image 2026-06-11 at 10 48 15" src="https://github.com/user-attachments/assets/fa035a56-60a4-46ba-b9e3-162c96fbd87e" />
+
 
 ### 🟩 Vídeos do funcionamento
 https://github.com/user-attachments/assets/f3248cd9-5c77-492a-abef-b5cfd8007cdd
