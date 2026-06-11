@@ -1,102 +1,38 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoramento MQTT</title>
-
+    <title>Input MQTT</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='global.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', path='components.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
 </head>
 <body>
 
-    <div class="container_input">
+    <div class="container_home">
 
-        
-        <div class="topo">
+        <div class="home-box">
 
-            <a href="/home">
-                <button class="voltar">
-                    Página Inicial
-                </button>
-            </a>
-
-            <h2>
-                Input de Comandos MQTT
-            </h2>
-
-            <a href="/">
-                <button class="sair">
-                    SAIR
-                </button>
-            </a>
-
-        </div>
-
-        <div class="comando-box">
-
-            <h3>ESCREVER COMANDO</h3>
-
-            <div class="input-area">
-
-                <input
-                    type="text"
-                    id="comandoInput"
-                    placeholder="Digite um comando MQTT"
-                >
-
-                <button onclick>
-                    ENVIAR
-                </button>
-
+            <div class="high">
+                <a href="/home"><button>PAGINA INICIAL</button></a>
+                <h2>INPUT MQTT</h2>
+                <a href="/"><button>SAIR</button></a>
             </div>
 
-        </div>
+            <div class="mid">
+                <form action="/on" method="post">
+                    <button class="comando" type="submit">ON</button>
+                </form>
 
-        <div class="status-box">
-
-            <h1>STATUS</h1>
-
-            <div id="statusArea">
-
-                <p>
-                    Aguardando comando...
-                </p>
-
+                <form action="/off" method="post">
+                    <button class="comando" type="submit">OFF</button>
+                </form>
             </div>
 
         </div>
 
     </div>
-
-    <script>
-        const statusArea = document.getElementById('statusArea');
-
-        async function atualizarStatusMQTT() {
-            try {
-                const response = await fetch('/mqtt/status', { cache: 'no-store' });
-                const data = await response.json();
-                const connectedText = data.connected ? 'Conectado' : 'Desconectado';
-                const subscribedTopics = data.subscribed_topics && data.subscribed_topics.length
-                    ? data.subscribed_topics.join(', ')
-                    : 'nenhum';
-                statusArea.innerHTML = `
-                    <p><strong>Status MQTT:</strong> ${connectedText}</p>
-                    <p><strong>Subscriber:</strong> ${data.subscribed ? 'ativo' : 'inativo'}</p>
-                    <p><strong>Estado atual:</strong> ${data.state || 'indefinido'}</p>
-                    <p><strong>Topicos inscritos:</strong> ${subscribedTopics}</p>
-                    <p><strong>Ultimo comando recebido:</strong> ${data.last_message || 'sem mensagens recebidas'}</p>
-                    <p><strong>Topico da mensagem:</strong> ${data.last_message_topic || 'sem topico'}</p>
-                    <p><strong>Recebido em:</strong> ${data.updated_at || 'sem horario'}</p>
-                `;
-            } catch (error) {
-                statusArea.innerHTML = '<p>Falha ao consultar o status MQTT.</p>';
-            }
-        }
-
-        atualizarStatusMQTT();
-        setInterval(atualizarStatusMQTT, 2000);
-    </script>
-
 
 </body>
 </html>

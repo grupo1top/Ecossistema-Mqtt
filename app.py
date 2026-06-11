@@ -136,6 +136,7 @@ async def home(request: Request):
 async def input(request: Request):
 	return templates.TemplateResponse(request, "input.html", {"request": request})
 
+
 #                                 CONFIGURAÇÕES INICIAIS                                  #
 
 #                                      FORMULARIOS                                        #
@@ -226,6 +227,26 @@ async def ligar_led():
 		return RedirectResponse(url="/home?status=success&message=LED%20ligado%20e%20mensagem%20enviada%20ao%20broker", status_code=303)
 	except Exception as e:
 		return RedirectResponse(url="/home?status=error&message=Falha%20ao%20publicar%20no%20broker%20MQTT", status_code=303)
+
+
+@app.post("/ON")
+@app.post("/on")
+async def input_ligar():
+	try:
+		publicar_mqtt(COMMAND_TOPIC, "ON")
+		return RedirectResponse(url="/input", status_code=303)
+	except Exception as e:
+		return RedirectResponse(url="/input", status_code=303)
+
+
+@app.post("/OFF")
+@app.post("/off")
+async def input_desligar():
+	try:
+		publicar_mqtt(COMMAND_TOPIC, "OFF")
+		return RedirectResponse(url="/input", status_code=303)
+	except Exception as e:
+		return RedirectResponse(url="/input", status_code=303)
 
 @app.post("/led/off")
 async def desligar_led():
