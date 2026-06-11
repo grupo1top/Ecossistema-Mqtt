@@ -26,7 +26,7 @@ app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), na
 mqtt_client = None
 mqtt_lock = Lock()
 mqtt_topic = ""
-COMMAND_TOPIC = "esp32/led"
+COMMAND_TOPIC = "PROJ/ECOSSISTEMA"
 mqtt_state = {
 	"connected": False,
 	"subscribed": False,
@@ -229,7 +229,7 @@ async def ligar_led():
 		return RedirectResponse(url="/home?status=error&message=Falha%20ao%20publicar%20no%20broker%20MQTT", status_code=303)
 
 
-@app.post("/ON")
+@app.post("/ligar")
 async def input_ligar():
 	try:
 		publicar_mqtt(COMMAND_TOPIC, "ON")
@@ -238,7 +238,7 @@ async def input_ligar():
 		return RedirectResponse(url="/input", status_code=303)
 
 
-@app.post("/OFF")
+@app.post("/desligar")
 async def input_desligar():
 	try:
 		publicar_mqtt(COMMAND_TOPIC, "OFF")
